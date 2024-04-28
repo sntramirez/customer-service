@@ -1,11 +1,10 @@
 package com.devsu.customerservice.domain.core;
 
-import com.devsu.customerservice.application.api.model.Cuenta;
-import com.devsu.customerservice.application.api.model.Movimiento;
-import com.devsu.customerservice.application.api.model.RespuestaMovimiento;
-import com.devsu.customerservice.application.api.model.SolicitudMovimiento;
+import com.devsu.customerservice.application.api.model.*;
 import com.devsu.customerservice.infraestructure.data.entities.Cliente;
+import com.devsu.customerservice.infraestructure.data.entities.Persona;
 import com.devsu.customerservice.infraestructure.data.repository.ClienteRepository;
+import com.devsu.customerservice.infraestructure.data.repository.PersonaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +13,18 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ClienteServicio {
     private static final Logger log = LoggerFactory.getLogger(ClienteServicio.class);
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private PersonaRepository personaRepository;
 
     @Autowired
     private MovimientoServicio movimientoServicio;
@@ -71,6 +76,31 @@ public class ClienteServicio {
 
         return respuesta;
 
+    }
+
+    public ReporteClienteMovimientosDto reporteClienteMovimientos(LocalDate createDateFrom,
+                                                                  LocalDate createDateTo,
+                                                                  String identificacion ) {
+
+        List<ClienteDto> cuentaDto = new ArrayList<>();
+        Persona persona = personaRepository.findByIdentificacion(identificacion);
+
+        List<Cliente>  clientes = clienteRepository.findByPersonaId(persona.getId());
+
+        for(Cliente cliente : clientes){
+            Cuenta cuenta = cuentaServicio.findByNumeroCuenta(cliente.getNumeroCuenta());
+            Movimientos movimientos = movimientoServicio.findByCuentaFecha(cuenta.getId(),createDateFrom,createDateTo);
+            ClienteDto clienteDto = new ClienteDto();
+            clienteDto.setNumeroCuenta(cuenta.getNumeroCuenta());
+            clienteDto.setTipoCuenta(cuenta.getTipoCuenta());
+            clienteDto.setMovimientos(movimientos);
+            cuentaDto.add(clienteDto);
+        }
+
+      return ReporteClienteMovimientosDto.builder()
+              .nombre(persona.getNombre())
+              .identificacion(persona.getIdentificacion()).cuentas(cuentaDto)
+              .build();
 
     }
 }

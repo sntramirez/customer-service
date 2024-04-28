@@ -11,6 +11,8 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.querydsl.binding.SingleValueBinding;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.List;
+
 @RepositoryRestResource(path = "clientes", collectionResourceRel = "clientes")
 public interface ClienteRepository extends JpaRepository<Cliente, Long>,
         QuerydslPredicateExecutor<Cliente>, QuerydslBinderCustomizer<QCliente>{
@@ -23,4 +25,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long>,
     }
 
     Cliente findByNumeroCuenta(String numeroCuenta);
+
+    List<Cliente> findByPersonaId(Long personaId);
+
 }

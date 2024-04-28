@@ -22,4 +22,6 @@ public interface PersonaRepository extends JpaRepository<Persona, Long>,
         bindings.bind(String.class)
                 .first((SingleValueBinding<StringPath, String>) StringExpression::containsIgnoreCase);
     }
+
+    Persona findByIdentificacion(String identificacion);
 }
