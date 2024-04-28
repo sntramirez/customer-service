@@ -1,6 +1,8 @@
 package com.devsu.customerservice.application.api.config;
 
 
+import com.devsu.customerservice.application.api.model.RespuestaMovimiento;
+import com.devsu.customerservice.application.api.model.RespuestaMovimientoSerializer;
 import com.devsu.customerservice.application.api.model.SolicitudMovimiento;
 import com.devsu.customerservice.application.api.model.SolicitudMovimientoSerializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -32,26 +34,26 @@ public class KafkaConfig {
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, SolicitudMovimientoSerializer.class);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
-
-    @Bean
-    public ConsumerFactory<String, SolicitudMovimiento> consumerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        // Configuración para deserializar JSON a RespuestaMovimiento
-        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(configProps, new StringDeserializer(),
-                new JsonDeserializer<>(SolicitudMovimiento.class));
-    }
-
     @Bean
     public KafkaTemplate<String, SolicitudMovimiento> respuestaKafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
+
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, SolicitudMovimiento>
+    public ConsumerFactory<String, RespuestaMovimiento> consumerFactory() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        // Configuración para deserializar JSON a RespuestaMovimiento
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, RespuestaMovimientoSerializer.class);
+        return new DefaultKafkaConsumerFactory<>(configProps, new StringDeserializer(),
+                new JsonDeserializer<>(RespuestaMovimiento.class));
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, RespuestaMovimiento>
     kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, SolicitudMovimiento> factory =
+        ConcurrentKafkaListenerContainerFactory<String, RespuestaMovimiento> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;

@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RespuestaMovimiento {
-    private Long numeroCuenta;
+    private String numeroCuenta;
     private boolean exito;
     private String mensaje;
 }
