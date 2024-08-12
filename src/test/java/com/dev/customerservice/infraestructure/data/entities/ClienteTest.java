@@ -16,14 +16,10 @@ class ClienteTest {
 
         Cliente cliente = new Cliente();
         cliente.setClienteId(clienteId);
-       // cliente.setPersonaId(personaId);
-       // cliente.setNumeroCuenta(numeroCuen);
         cliente.setContrasena(contrasena);
         cliente.setEstado(estado);
 
         Assertions.assertEquals(clienteId,cliente.getClienteId());
-        //Assertions.assertEquals(personaId,cliente.getPersonaId());
-       // Assertions.assertEquals(numeroCuen,cliente.getNumeroCuenta());
         Assertions.assertEquals(contrasena,cliente.getContrasena());
         Assertions.assertEquals(estado,cliente.getEstado());
 
