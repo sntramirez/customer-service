@@ -1,6 +1,7 @@
 package com.dev.customerservice.domain.core;
 
-import com.dev.customerservice.application.api.model.*;
+import com.dev.customerservice.domain.core.mapper.ClienteMapper;
+import com.dev.customerservice.domain.core.model.*;
 import com.dev.customerservice.infraestructure.data.entities.Cliente;
 import com.dev.customerservice.infraestructure.data.entities.Persona;
 import com.dev.customerservice.infraestructure.data.repository.ClienteRepository;
@@ -8,12 +9,11 @@ import com.dev.customerservice.infraestructure.data.repository.PersonaRepository
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,74 +33,52 @@ public class ClienteServicio {
     private CuentaServicio cuentaServicio;
 
     @Autowired
-    private KafkaTemplate<String, SolicitudMovimiento> kafkaTemplate;
+    private KafkaTemplate<String, SolicitudCreacionCuenta> kafkaTemplate;
+
+    @Autowired
+    private ClienteMapper clienteMapper;
 
 
-    @KafkaListener(topics = "topic-respuestas-movimiento", groupId = "grupo-clientes")
-    public void recibirRespuestaMovimiento(RespuestaMovimiento respuesta) {
-        if (respuesta != null) {
+    public ClienteDto crearCliente(ClienteDto clienteDto) {
 
-        } else {
+        Cliente cliente = clienteRepository.save(clienteMapper.convertToCliente(clienteDto));
 
+        // Enviar solicitud de creacion a Kafka
+        if (clienteDto.getTipoCuenta() != null && !clienteDto.getTipoCuenta().equals("")
+                && clienteDto.getSaldoInicial() != null && !clienteDto.getSaldoInicial().equals("")) {
+            kafkaTemplate.send("topic-solicitudes-creacion-cuenta"
+                    , clienteMapper.convertToSolicitudCreacionCuenta(clienteDto, cliente));
         }
+
+        return clienteMapper.convertToClienteDto(cliente);
     }
 
-
-
-    public RespuestaMovimiento  realizarMovimiento(SolicitudMovimiento solicitud) {
-        RespuestaMovimiento respuesta = new RespuestaMovimiento();
-        Cliente cliente = clienteRepository.findByNumeroCuenta(solicitud.getNumeroCuenta());
-
-        Cuenta cuenta = cuentaServicio.findByNumeroCuenta(solicitud.getNumeroCuenta());
-        Movimiento movimiento = movimientoServicio.findByCuenta(cuenta.getId());
-        BigDecimal nuevoSaldo = BigDecimal.ZERO;
-        if(movimiento!=null){
-            nuevoSaldo = cuenta.getSaldoInicial().add( solicitud.getValor() );
-        }else {
-            nuevoSaldo = solicitud.getValor().add(movimiento.getSaldo());
-        }
-
-
-        // Validar si el cliente tiene permiso para realizar el movimiento
-        if (nuevoSaldo.compareTo(BigDecimal.ZERO ) < 0) {
-            // Saldo insuficiente
-            respuesta.setExito(false);
-            respuesta.setMensaje("Saldo no disponible");
-        }else {
-            // Enviar solicitud de movimiento a Kafka
-            kafkaTemplate.send("topic-solicitudes-movimiento", solicitud);
-            respuesta.setNumeroCuenta(solicitud.getNumeroCuenta());
-            respuesta.setExito(true);
-            respuesta.setMensaje("Movimiento realizado con éxito");
-        }
-
-        return respuesta;
-
-    }
 
     public ReporteClienteMovimientosDto reporteClienteMovimientos(LocalDate createDateFrom,
                                                                   LocalDate createDateTo,
-                                                                  String identificacion ) {
+                                                                  String identificacion) {
 
-        List<ClienteDto> cuentaDto = new ArrayList<>();
+        List<ReporteClienteDto> cuentaDto = new ArrayList<>();
         Persona persona = personaRepository.findByIdentificacion(identificacion);
 
-        List<Cliente>  clientes = clienteRepository.findByPersonaId(persona.getId());
+        List<Cuenta> cuentas = cuentaServicio.findByClienteId(((Cliente) persona).getClienteId());
 
-        for(Cliente cliente : clientes){
-            Cuenta cuenta = cuentaServicio.findByNumeroCuenta(cliente.getNumeroCuenta());
-            Movimientos movimientos = movimientoServicio.findByCuentaFecha(cuenta.getId(),createDateFrom,createDateTo);
-            ClienteDto clienteDto = new ClienteDto();
-            clienteDto.setNumeroCuenta(cuenta.getNumeroCuenta());
-            clienteDto.setTipoCuenta(cuenta.getTipoCuenta());
-            clienteDto.setMovimientos(movimientos);
-            cuentaDto.add(clienteDto);
+        for (Cuenta cuenta : cuentas) {
+            Movimientos movimientos = movimientoServicio.findByCuentaFecha(cuenta.getId()
+                    , createDateFrom.format(DateTimeFormatter.ISO_DATE)
+                    , createDateTo.format(DateTimeFormatter.ISO_DATE));
+            ReporteClienteDto reporteClienteDto = new ReporteClienteDto();
+            reporteClienteDto.setNumeroCuenta(cuenta.getNumeroCuenta());
+            reporteClienteDto.setTipoCuenta(cuenta.getTipoCuenta());
+            reporteClienteDto.setMovimientos(movimientos);
+            cuentaDto.add(reporteClienteDto);
         }
 
-      return ReporteClienteMovimientosDto.builder()
-              .nombre(persona.getNombre())
-              .identificacion(persona.getIdentificacion()).cuentas(cuentaDto)
-              .build();
+
+        return ReporteClienteMovimientosDto.builder()
+                .nombre(persona.getNombre())
+                .identificacion(persona.getIdentificacion()).cuentas(cuentaDto)
+                .build();
 
     }
 }

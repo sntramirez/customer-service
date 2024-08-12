@@ -1,13 +1,14 @@
 package com.dev.customerservice.domain.core;
 
-import com.dev.customerservice.application.api.model.EmbeddedDto;
-import com.dev.customerservice.application.api.model.Movimiento;
-import com.dev.customerservice.application.api.model.Movimientos;
+import com.dev.customerservice.domain.core.model.EmbeddedDto;
+import com.dev.customerservice.domain.core.model.Movimiento;
+import com.dev.customerservice.domain.core.model.Movimientos;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class MovimientoServicio extends RestTemplateAbstract {
@@ -29,12 +30,12 @@ public class MovimientoServicio extends RestTemplateAbstract {
         return new Movimiento();
     }
 
-    public Movimientos findByCuentaFecha(Long cuentaId , LocalDate createDateFrom,
-                                              LocalDate createDateTo){
+    public Movimientos findByCuentaFecha(Long cuentaId , String createDateFrom,
+                                              String createDateTo){
         try{
             ResponseEntity<EmbeddedDto<Movimientos>> response = findByParameters(
                     urlMovimientos + "/search/findByCuentaFecha?cuentaId={cuentaId}&createDateFrom={createDateFrom}&createDateTo={createDateTo}",
-                    new ParameterizedTypeReference<EmbeddedDto<Movimientos>>() {
+                   new ParameterizedTypeReference<EmbeddedDto<Movimientos>>() {
                     },cuentaId,createDateFrom,createDateTo);
 
             if (response.getBody() != null) {

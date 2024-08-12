@@ -1,4 +1,4 @@
-package com.dev.customerservice.application.api.model;
+package com.dev.customerservice.domain.core.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

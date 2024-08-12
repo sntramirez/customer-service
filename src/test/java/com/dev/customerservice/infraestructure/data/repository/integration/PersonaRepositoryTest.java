@@ -1,6 +1,6 @@
 package com.dev.customerservice.infraestructure.data.repository.integration;
 
-import com.dev.customerservice.application.api.model.EmbeddedDto;
+import com.dev.customerservice.domain.core.model.EmbeddedDto;
 import com.dev.customerservice.infraestructure.data.entities.Persona;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;

@@ -5,17 +5,18 @@ import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "personas")
-@SequenceGenerator(name = "default_gen", sequenceName = "persona_id_seq" , allocationSize = 1)
-public class Persona {
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Persona implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "default_gen")
-    @Basic(optional = false)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "persona_sequence")
+    @SequenceGenerator(name = "persona_sequence", sequenceName = "persona_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "nombre", nullable = false)
@@ -33,7 +34,7 @@ public class Persona {
     @Column(name = "direccion", nullable = false)
     private String direccion;
 
-    @Column(name = "telefono", nullable = false)
+    @Column(name = "telefono", nullable = false , unique = true)
     private String telefono;
 
 }

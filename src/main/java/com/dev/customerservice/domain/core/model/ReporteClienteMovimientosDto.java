@@ -1,4 +1,4 @@
-package com.dev.customerservice.application.api.model;
+package com.dev.customerservice.domain.core.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,5 +12,5 @@ import java.util.List;
 public class ReporteClienteMovimientosDto {
     private String nombre;
     private String identificacion;
-    List<ClienteDto> cuentas;
+    List<ReporteClienteDto> cuentas;
 }

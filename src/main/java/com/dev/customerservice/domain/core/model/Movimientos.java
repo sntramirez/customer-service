@@ -1,4 +1,4 @@
-package com.dev.customerservice.application.api.model;
+package com.dev.customerservice.domain.core.model;
 
 import lombok.Getter;
 import lombok.Setter;

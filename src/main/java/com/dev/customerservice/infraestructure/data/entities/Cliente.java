@@ -1,33 +1,22 @@
 package com.dev.customerservice.infraestructure.data.entities;
-
-
-
-
-
 import javax.persistence.*;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 
 @Getter
 @Setter
 @Entity
-@SequenceGenerator(name = "default_gen", sequenceName = "cliente_id_seq" , allocationSize = 1)
-@Table(name = "Clientes")
-public class Cliente  {
+@Table(name = "clientes")
+@PrimaryKeyJoinColumn(name = "persona_id")
+public class Cliente extends Persona implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "default_gen")
-    @Basic(optional = false)
-    @Column(name = "id")
+    @Column(name = "cliente_id", unique = true, nullable = false)
     private Long clienteId;
-
-    @Column(name = "persona_id", nullable = false)
-    private Long personaId;
-
-    @Column(name = "numero_cuenta", nullable = false, length = 500)
-    private String numeroCuenta;
 
     @Column(name = "contrasena",nullable = false, length = 500)
     private String contrasena;

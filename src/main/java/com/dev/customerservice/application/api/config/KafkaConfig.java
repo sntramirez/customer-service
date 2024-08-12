@@ -1,10 +1,10 @@
 package com.dev.customerservice.application.api.config;
 
 
-import com.dev.customerservice.application.api.model.RespuestaMovimiento;
-import com.dev.customerservice.application.api.model.RespuestaMovimientoSerializer;
-import com.dev.customerservice.application.api.model.SolicitudMovimiento;
-import com.dev.customerservice.application.api.model.SolicitudMovimientoSerializer;
+import com.dev.customerservice.domain.core.model.RespuestaMovimiento;
+import com.dev.customerservice.domain.core.model.RespuestaMovimientoSerializer;
+import com.dev.customerservice.domain.core.model.SolicitudCreacionCuenta;
+import com.dev.customerservice.domain.core.model.SolicitudCreacionCuentaSerializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class KafkaConfig {
 
     @Bean
-    public ProducerFactory<String, SolicitudMovimiento> producerFactory() {
+    public ProducerFactory<String, SolicitudCreacionCuenta> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configProps.put(ProducerConfig.ACKS_CONFIG, "1");
@@ -31,11 +31,11 @@ public class KafkaConfig {
         configProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         configProps.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, SolicitudMovimientoSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, SolicitudCreacionCuentaSerializer.class);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
     @Bean
-    public KafkaTemplate<String, SolicitudMovimiento> respuestaKafkaTemplate() {
+    public KafkaTemplate<String, SolicitudCreacionCuenta> respuestaKafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
