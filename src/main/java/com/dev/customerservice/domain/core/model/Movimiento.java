@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class Movimiento {
-    private Long id;
     private LocalDate fecha;
     private String tipoMovimiento;
     private BigDecimal valor;
