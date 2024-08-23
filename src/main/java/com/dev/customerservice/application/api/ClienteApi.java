@@ -26,19 +26,10 @@ public class ClienteApi {
 
 
     @PostMapping
-    public ResponseEntity<?> crearCliente(@Valid @RequestBody ClienteDto clienteDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getFieldErrors().stream()
-                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                    .collect(Collectors.toList());
-            return ResponseEntity.badRequest().body(errors);
-        }
+    public ResponseEntity<?> crearCliente(@Valid @RequestBody ClienteDto clienteDto) {
 
-        try {
-            return ResponseEntity.ok(clienteServicio.crearCliente(clienteDto));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(clienteServicio.crearCliente(clienteDto));
+
 
     }
 

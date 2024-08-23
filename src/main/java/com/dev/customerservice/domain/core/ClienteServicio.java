@@ -63,6 +63,17 @@ public class ClienteServicio {
 
         List<Cuenta> cuentas = cuentaServicio.findByClienteId(((Cliente) persona).getClienteId());
 
+//        cuentas.forEach(cuenta -> {
+//            Movimientos movimientos = movimientoServicio.findByCuentaFecha(cuenta.getId()
+//                    , createDateFrom.format(DateTimeFormatter.ISO_DATE)
+//                    , createDateTo.format(DateTimeFormatter.ISO_DATE));
+//            ReporteClienteDto reporteClienteDto = new ReporteClienteDto();
+//            reporteClienteDto.setNumeroCuenta(cuenta.getNumeroCuenta());
+//            reporteClienteDto.setTipoCuenta(cuenta.getTipoCuenta());
+//            reporteClienteDto.setMovimientos(movimientos);
+//            cuentaDto.add(reporteClienteDto);
+//        });
+
         for (Cuenta cuenta : cuentas) {
             Movimientos movimientos = movimientoServicio.findByCuentaFecha(cuenta.getId()
                     , createDateFrom.format(DateTimeFormatter.ISO_DATE)
