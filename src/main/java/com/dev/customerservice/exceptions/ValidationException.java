@@ -1,4 +1,4 @@
-package com.dev.customerservice.domain.core.model;
+package com.dev.customerservice.exceptions;
 
 import org.springframework.validation.BindingResult;
 

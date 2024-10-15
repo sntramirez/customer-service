@@ -1,4 +1,4 @@
-package com.dev.customerservice.application.api.config;
+package com.dev.customerservice.infraestructure.config;
 
 
 import com.dev.customerservice.domain.core.model.RespuestaMovimiento;

@@ -1,10 +1,11 @@
 package com.dev.customerservice.domain.core.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+
 
 @Getter
 @Setter

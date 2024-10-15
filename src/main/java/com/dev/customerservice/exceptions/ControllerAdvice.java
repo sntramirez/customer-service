@@ -1,7 +1,6 @@
-package com.dev.customerservice.application.api.advice;
+package com.dev.customerservice.exceptions;
 
 import com.dev.customerservice.domain.core.model.ErrorDto;
-import com.dev.customerservice.domain.core.model.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

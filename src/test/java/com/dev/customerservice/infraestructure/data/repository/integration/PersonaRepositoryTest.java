@@ -85,7 +85,7 @@ class PersonaRepositoryTest extends TestUtils {
 
     private <T> ResponseEntity<T> post(String url, Object body, Class<T> clazz) {
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setReadTimeout(1200000);
+        //requestFactory.setReadTimeout(1200000);
         this.restTemplate.getRestTemplate().setRequestFactory(requestFactory);
         return this.restTemplate.exchange(url, HttpMethod.POST, getEntityWithBodyAndTenant(body),
                 clazz);
